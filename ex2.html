@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Irregularities:Task 2</title>
+<style>
+    body {
+        font-family: 'Georgia', serif;
+        background-color: #f2f6fc;
+        color: #333;
+        text-align: center;
+    }
+    h1 {
+        color: #002147;
+        margin-bottom: 20px;
+        font-size: 2em;
+    }
+    h2 {
+        color: #0056b3;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+    }
+    .container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+    }
+    .dropzone, .word {
+        border: 1px solid #ccc;
+        padding: 10px;
+        font-size: 16px;
+        width: 100px;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 5px;
+        background-color: #ffffff;
+    }
+    .dropzone {
+        background-color: #e7f1ff;
+    }
+    #message {
+        margin-top: 20px;
+        font-size: 20px;
+        color: #28a745;
+        font-weight: bold;
+    }
+    button {
+        padding: 10px;
+        font-size: 16px;
+        margin-top: 20px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: #ffffff;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<h1>Irregularities: Task 2</h1>
+<h2>Поставьте формы глагола в правильном порядке</h2>
+<div class="container">
+    <div class="dropzone" id="form1">1 форма</div>
+    <div class="dropzone" id="form2">2 форма</div>
+    <div class="dropzone" id="form3">3 форма</div>
+</div>
+ 
+<div class="container" id="wordsContainer">
+    <div class="word" draggable="true" id="fly">fly</div>
+    <div class="word" draggable="true" id="flew">flew</div>
+    <div class="word" draggable="true" id="flown">flown</div>
+</div>
+ 
+<button onclick="checkAnswer()">Проверить</button>
+<div id="message"></div>
+ 
+<script>
+    
+    function shuffleWords() {
+        const wordsContainer = document.getElementById('wordsContainer');
+        const words = Array.from(wordsContainer.children);
+        for (let i = words.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [words[i], words[j]] = [words[j], words[i]];
+        }
+       
+        words.forEach(word => wordsContainer.appendChild(word));
+    }
+
+    document.querySelectorAll('.word').forEach(word => {
+        word.addEventListener('dragstart', dragStart);
+    });
+
+    document.querySelectorAll('.dropzone').forEach(dropzone => {
+        dropzone.addEventListener('dragover', dragOver);
+        dropzone.addEventListener('drop', drop);
+    });
+
+    function dragStart(event) {
+        event.dataTransfer.setData('text', event.target.id);
+    }
+
+    function dragOver(event) {
+        event.preventDefault();
+    }
+
+    function drop(event) {
+        event.preventDefault();
+        const wordId = event.dataTransfer.getData('text');
+        event.target.textContent = document.getElementById(wordId).textContent;
+    }
+
+    function checkAnswer() {
+        const form1 = document.getElementById('form1').textContent.trim();
+        const form2 = document.getElementById('form2').textContent.trim();
+        const form3 = document.getElementById('form3').textContent.trim();
+        const message = document.getElementById('message');
+
+        if (form1 === 'fly' && form2 === 'flew' && form3 === 'flown') {
+            message.textContent = 'Exelent';
+        } else {
+            message.textContent = 'Oops. Try again!';
+        }
+    }
+
+    
+    shuffleWords();
+</script>
+</body>
+</html>

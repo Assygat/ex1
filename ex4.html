@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Irregularities: Task 4</title>
+<style>
+    body {
+        font-family: 'Georgia', serif;
+        background-color: #f7f7f7; /* Светлый фон */
+        color: #333;
+        line-height: 1.6;
+        margin: 20px;
+        text-align: center;
+    }
+    h1 {
+        color: #002147; /* Deep blue */
+        margin-bottom: 30px;
+    }
+    .container {
+        display: flex;
+        justify-content: space-around;
+        position: relative;
+    }
+    .column {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 45%; /* Два столбца */
+        margin: 0 10px;
+    }
+    button {
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #ffffff;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #f0f0f0; 
+    }
+    .correct {
+        background-color: lightgreen;
+    }
+    .incorrect {
+        background-color: lightcoral; 
+    }
+    canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+    }
+</style>
+</head>
+<body>
+<h1>Irregularities: Task 4</h1>
+<div class="container">
+    <div class="column" id="questionButtons">
+        <button data-question="begin">begin</button>
+        <button data-question="sing">sing</button>
+        <button data-question="shrink">shrink</button>
+    </div>
+    <div class="column" id="answerButtons">
+        <button data-answer="began">began</button>
+        <button data-answer="sang">sang</button>
+        <button data-answer="shrank">shrank</button>
+    </div>
+</div>
+<canvas id="canvas"></canvas>
+<button id="checkButton">Проверить ответы</button>
+
+<script>
+    let selectedQuestion = null;
+    let selectedAnswer = null;
+    let connections = [];
+    const correctPairs = {
+        'begin': ['began', 'begun'],
+        'sing': ['sang', 'sung'],
+        'shrink': ['shrank', 'shrinked']
+    };
+ 
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+ 
+    function getButtonCenter(button) {
+        const rect = button.getBoundingClientRect();
+        return {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+        };
+    }
+ 
+    function drawLine(startPos, endPos) {
+        ctx.beginPath();
+        ctx.moveTo(startPos.x, startPos.y);
+        ctx.lineTo(endPos.x, endPos.y);
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+ 
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+ 
+    function redrawLines() {
+        clearCanvas();
+        connections.forEach(connection => {
+            const questionButton = document.querySelector(`[data-question="${connection.question}"]`);
+            const answerButton = document.querySelector(`[data-answer="${connection.answer}"]`);
+ 
+            const questionPos = getButtonCenter(questionButton);
+            const answerPos = getButtonCenter(answerButton);
+            drawLine(questionPos, answerPos);
+        });
+    }
+ 
+    document.getElementById('questionButtons').addEventListener('click', function(event) {
+        if (event.target.tagName === 'BUTTON') {
+            selectedQuestion = event.target;
+            selectedAnswer = null; // Сбрасываем выбранный ответ
+        }
+    });
+ 
+    document.getElementById('answerButtons').addEventListener('click', function(event) {
+        if (event.target.tagName === 'BUTTON' && selectedQuestion) {
+            selectedAnswer = event.target;
+            const question = selectedQuestion.getAttribute('data-question');
+            const answer = selectedAnswer.getAttribute('data-answer');
+ 
+            // Проверка на существующее соединение
+            const existingConnectionIndex = connections.findIndex(connection =>
+                connection.question === question && connection.answer === answer
+            );
+ 
+            if (existingConnectionIndex === -1) {
+                connections.push({ question, answer });
+                const questionPos = getButtonCenter(selectedQuestion);
+                const answerPos = getButtonCenter(selectedAnswer);
+                drawLine(questionPos, answerPos);
+            }
+ 
+            selectedQuestion = null; // Сброс выбранного вопроса
+        }
+    });
+ 
+    document.getElementById('checkButton').addEventListener('click', function() {
+        clearCanvas();
+        connections.forEach(connection => {
+            const questionButton = document.querySelector(`[data-question="${connection.question}"]`);
+            const answerButton = document.querySelector(`[data-answer="${connection.answer}"]`);
+ 
+            // Проверка на правильность ответов
+            if (correctPairs[connection.question].includes(connection.answer)) {
+                questionButton.classList.add('correct');
+                answerButton.classList.add('correct');
+            } else {
+                questionButton.classList.add('incorrect');
+                answerButton.classList.add('incorrect');
+            }
+        });
+        redrawLines();
+    });
+ 
+    window.addEventListener('resize', function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        redrawLines();
+    });
+ 
+    // Случайное размещение кнопок
+    function shuffleButtons() {
+        const columns = [document.getElementById('questionButtons'), document.getElementById('answerButtons')];
+        columns.forEach(column => {
+            const buttons = Array.from(column.children);
+            for (let i = buttons.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                column.appendChild(buttons[j]);
+                buttons.splice(j, 1);
+            }
+        });
+    }
+ 
+    // Перемешиваем кнопки при загрузке
+    shuffleButtons();
+</script>
+</body>
+</html>

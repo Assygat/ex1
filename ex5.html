@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Irregularities: Task 5</title>
+<style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #f2f6fc;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #002147;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        h2 {
+            color: #0056b3;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        .sentence {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        select, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+        }
+        button {
+            cursor: pointer;
+            background-color: #e7f1ff;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #28a745;
+            font-weight: bold;
+        }
+</style>
+</head>
+<body>
+<h1>Irregularities: Task 5</h1>
+<h2>Выберите подходящую форму глагола</h2>
+<div class="sentence">
+        the teacher told the children how he 
+<select id="verbSelect">
+<option value="">??</option>
+<option value="fly">fly</option>
+<option value="flew">flew</option>
+<option value="flown">flown</option>
+</select>
+        to England
+</div>
+ 
+    <button onclick="checkAnswer()">Проверить</button>
+<div id="message"></div>
+ 
+    <script>
+        function checkAnswer() {
+            const selectedOption = document.getElementById('verbSelect').value;
+            const message = document.getElementById('message');
+ 
+            if (selectedOption === "flew") {
+                message.textContent = 'Good';
+            } else {
+                message.textContent = 'Oops. Lets try again!';
+            }
+        }
+</script>
+</body>
+</html>
